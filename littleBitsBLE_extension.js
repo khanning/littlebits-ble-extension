@@ -56,11 +56,16 @@
     return inputVal;
   };
 
+  ext.turnOutput = function(val) {
+    if (val === 'on') val = 100;
+    else if (val === 'off') val = 0;
+    var output = [0, 2, Math.round(map(val, 0, 100, 0, 255))];
+    device.emit('write', {uuid: TX_CHAR, bytes: output});
+  };
+
   ext.sendOutput = function(val) {
-    if (val === 'on' || val > 100)
-      val = 100;
-    else if (val === 'off' || val < 0)
-      val = 0;
+    if (val > 100) val = 100;
+    else if (val < 0) val = 0;
     var output = [0, 2, Math.round(map(val, 0, 100, 0, 255))];
     device.emit('write', {uuid: TX_CHAR, bytes: output});
   };
@@ -112,7 +117,7 @@
     ['h', 'when input is %m.ops %n', 'whenInputCompare', '>', 50],
     ['r', 'input', 'getInput'],
     [' '],
-    [' ', 'turn output %m.dStates', 'sendOutput', 'on'],
+    [' ', 'turn output %m.dStates', 'turnOutput', 'on'],
     [' ', 'set output to %n%', 'sendOutput', 100]
   ];
 
